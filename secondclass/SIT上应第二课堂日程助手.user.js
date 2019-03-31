@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         SIT上应第二课堂日程助手
 // @namespace    snomiao@gmail.com
-// @version      0.1
+// @version      0.2
 // @description  功能：1) 在任意活动内下载ical格式的日程表 2)一键显示前200项活动
 // @author       snomiao
 // @match        http://sc.sit.edu.cn/*
