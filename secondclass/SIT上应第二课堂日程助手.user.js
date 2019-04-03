@@ -328,7 +328,7 @@ var download_text_plain = (text, title) => {
     download(URL.createObjectURL(new Blob([text])), title);
 }
 
-// all
+// 显示工具栏
 var mk_toolbar_ed = false;
 var mk_toolbar = ()=>{
     var container = document.querySelector(".user-info")
@@ -339,9 +339,9 @@ var mk_toolbar = ()=>{
     container.append(tool_bar);
     var toolbarHTML = `<a href="http://sc.sit.edu.cn/public/activity/activityList.action?pageNo=1&pageSize=200&categoryId=&activityName=">查看最近的200个活动</a>`
     if(window.location.href.match("activityDetail.action")){
-        toolbarHTML += `<button onclick="download_current_activity_calendar_ical">下载ical日程（当前事件）</button>`
+        toolbarHTML += `<button onclick="download_current_activity_calendar_ical()">下载ical日程（当前事件）</button>`
     }else{
-        toolbarHTML += `<button onclick="download_listof_activity_calendar_ical">下载ical日程（当前列表）</button>`
+        toolbarHTML += `<button onclick="download_listof_activity_calendar_ical()">下载ical日程（当前列表）</button>`
     }
     tool_bar.innerHTML = toolbarHTML;
     mk_toolbar_ed = true;
