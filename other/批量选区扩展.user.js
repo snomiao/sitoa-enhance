@@ -24,7 +24,7 @@
             var selNode = selection.getRangeAt(0).commonAncestorContainer;
             selection.selectAllChildren(selNode.parentNode);
             if(document.execCommand("copy")){
-                msgbox("HTML内容已复制")
+                msgbox("HTML内容已复制")    
             }else{
                 msgbox("HTML内容复制失败")
             }

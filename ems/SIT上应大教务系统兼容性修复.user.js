@@ -16,5 +16,4 @@
     pageForm.all = pageForm.all ? pageForm.all : {};
     pageForm.all.srTerm = document.querySelector('[name="srTerm"]');
     pageForm.all.srTerm2 = document.querySelector('[name="srTerm2"]');
-
 })();
