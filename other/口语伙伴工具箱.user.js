@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         上应口语伙伴工具箱
 // @namespace    snomiao@gmail.com
-// @version      0.2
+// @version      20190417.142806
 // @description  可查询自己读了多少秒，读了什么课文
 // @author       snomiao
 // @include      *://210.35.98.12:8844/*
@@ -93,7 +93,7 @@ var getLearningReports = async (e) => {
 	// alert(report)
 	var ele = document.createElement('div')
 	ele.innerHTML = `<pre>${report}</pre>`
-	document.body.append(ele);
+	document.body.insertBefore(ele,document.body.firstChild);
 	var selection = window.getSelection();
 	selection.selectAllChildren(ele);
 
@@ -121,15 +121,51 @@ var LearningReport = async()=>{
 	document.querySelector('.u_name').append(btn)
 }
 
-var ForceSubmitScore = async (uid) => {
+var ForceSubmitScore = async (lid, uid) => {
+	let httpGetAsync = (theUrl) => {
+		return new Promise((resolve, reject)=>{
+			var httpRequest = new XMLHttpRequest();
+			httpRequest.onreadystatechange = function() {
+				if (httpRequest.readyState == 4 && httpRequest.status == 200) {
+					//if you fetch a file you can JSON.parse(httpRequest.responseText)
+					var data = httpRequest.responseText;
+					resolve(data);
+				}
+			};
+			httpRequest.open('GET', theUrl, true);
+			httpRequest.send(null);
+		})
+	}
+
+	if(!uid){
+		let profileHTML = await httpGetAsync("http://210.35.98.12:8844/cp.php?ac=profile");
+		let match = profileHTML.match(/uid=(\d+)/); if(!match) return false;
+		let uid = match[1];
+		return ForceSubmitScore(lid, uid)
+	}
+	
+	let pron   = round(Math.random() * 5 + 87, 2)
+	let tone   = round(Math.random() * 5 + 87, 2)
+	let rhythm = round(Math.random() * 5 + 87, 2)
+	let scope  = round(Math.random() * 5 + 87, 2)
+	let total  = round(Math.random() * 5 + 87, 2)
+	let spendtime = round(Math.random() * 150 + 400, 0)
+	let token = 11200000 + parseInt(Math.random() * 10000)
+	let url =`http://210.35.98.12:8844//playserver.php?target=&lid=${lid}&testtype=0&targetid=&uid=${uid}&do=submitscore&total=${total}&pron=${pron}&tone=${tone}&rhythm=${rhythm}&scope=${scope}&spendtime=${spendtime}&token=${token}`
+	
+	return true;
+}
+
+var ForceSubmitScoreButtons = async (uid) => {
 	if(!uid){
 		let profileHTML = await httpGetAsync("http://210.35.98.12:8844/cp.php?ac=profile");
 		let match = profileHTML.match(/uid=(\d+)/)
 		if(!match) return false
 		let uid = match[1];
-		return ForceSubmitScore(uid)
+		return ForceSubmitScoreButtons(uid)
 	}
-	[...document.querySelectorAll("a")].filter(e=>e.href.match(/.\/s\.php\?do=lesson&lid=(\d+)/)).map(e=>{
+	// 历史成绩页面
+	[...document.querySelectorAll("a")].filter(e=>e.href.match(/\.\/s\.php\?do=lesson&lid=(\d+)/)).map(e=>{
 		var round = (number, precision) => Math.round(+number + 'e' + precision) / Math.pow(10, precision)
 		let lid = e.href.match(/.\/s\.php\?do=lesson&lid=(\d+)/)[1]
 		let pron   = round(Math.random() * 5 + 87, 2)
@@ -141,20 +177,44 @@ var ForceSubmitScore = async (uid) => {
 		let token = 11200000 + parseInt(Math.random() * 10000)
 		let url =`http://210.35.98.12:8844//playserver.php?target=&lid=${lid}&testtype=0&targetid=&uid=${uid}&do=submitscore&total=${total}&pron=${pron}&tone=${tone}&rhythm=${rhythm}&scope=${scope}&spendtime=${spendtime}&token=${token}`
 		
-		let btn = document.createElement("button")
-		btn.innerHTML = `我要 ${total} 分！`
-		btn.addEventListener("click", async (e) => {
-			e.target.disabled=true;
-			await httpGetAsync(url);
-			window.location = window.location;
-			e.target.disabled=false;
-		})
-		
-		let div = document.createElement("div")
-		div.append(btn);
+		let btn = document.createElement("button"); btn.innerHTML = `我要 ${total} 分！`
+		let a = document.createElement("a"); a.append(btn); a.href=url; a.target = "_BLANK";
+		let div = document.createElement("div"); div.append(a);
 		e.parentNode.append(div)
 	});
+
+	// 课文列表页面
+	
+	[...document.querySelectorAll("a")].filter(e=>e.href.match(/.*\/s\.php\?do=lesson&iden=.*/)).map(async e=>{
+		e.addEventListener("mouseover", async()=>{
+			if(e.disabled) return;
+			e.disabled = true;
+			let lessonHTML = await httpGetAsync(e.href);
+			let match1 = lessonHTML.match(/uid=(\d+)/); if(!match1) return false;
+			let uid = match1[1];
+			let match2 = lessonHTML.match(/lid=(\d+)/); if(!match2) return false;
+			let lid = match2[1];
+			
+			var round = (number, precision) => Math.round(+number + 'e' + precision) / Math.pow(10, precision)
+			let pron   = round(Math.random() * 5 + 87, 2)
+			let tone   = round(Math.random() * 5 + 87, 2)
+			let rhythm = round(Math.random() * 5 + 87, 2)
+			let scope  = round(Math.random() * 5 + 87, 2)
+			let total  = round(Math.random() * 5 + 87, 2)
+			let spendtime = round(Math.random() * 150 + 400, 0)
+			let token = 11200000 + parseInt(Math.random() * 10000)
+			let url =`http://210.35.98.12:8844//playserver.php?target=&lid=${lid}&testtype=0&targetid=&uid=${uid}&do=submitscore&total=${total}&pron=${pron}&tone=${tone}&rhythm=${rhythm}&scope=${scope}&spendtime=${spendtime}&token=${token}`
+			let btn = document.createElement("button"); btn.innerHTML = `我要 ${total} 分！`;
+			btn.addEventListener("click", async ()=>{await httpGetAsync(url); window.location=window.location})
+			let a = document.createElement("a"); a.append(btn); // a.href=url; a.target = "_BLANK";
+			let div = document.createElement("div"); div.append(a);
+			e.parentNode.append(a)	
+		})
+	});
+	
 	return true;
 }
+
 LearningReport()
-ForceSubmitScore()
+ForceSubmitScoreButtons()
+
