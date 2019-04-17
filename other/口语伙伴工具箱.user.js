@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         上应口语伙伴工具箱
 // @namespace    snomiao@gmail.com
-// @version      0.1
+// @version      0.2
 // @description  可查询自己读了多少秒，读了什么课文
 // @author       snomiao
 // @include      *://210.35.98.12:8844/*
@@ -120,7 +120,6 @@ var LearningReport = async()=>{
 	btn.addEventListener('click', getLearningReports)
 	document.querySelector('.u_name').append(btn)
 }
-LearningReport()
 
 var ForceSubmitScore = async (uid) => {
 	if(!uid){
@@ -144,7 +143,7 @@ var ForceSubmitScore = async (uid) => {
 		
 		let btn = document.createElement("button")
 		btn.innerHTML = `我要 ${total} 分！`
-		btn.addEventListener("click", (e)=> {
+		btn.addEventListener("click", async (e) => {
 			e.target.disabled=true;
 			await httpGetAsync(url);
 			window.location = window.location;
@@ -157,5 +156,5 @@ var ForceSubmitScore = async (uid) => {
 	});
 	return true;
 }
-
+LearningReport()
 ForceSubmitScore()
