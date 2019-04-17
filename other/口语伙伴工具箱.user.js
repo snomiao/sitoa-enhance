@@ -8,22 +8,23 @@
 // @grant        none
 // ==/UserScript==
 
+var httpGetAsync = (theUrl) => {
+	return new Promise((resolve, reject)=>{
+		var httpRequest = new XMLHttpRequest();
+		httpRequest.onreadystatechange = function() {
+			if (httpRequest.readyState == 4 && httpRequest.status == 200) {
+				//if you fetch a file you can JSON.parse(httpRequest.responseText)
+				var data = httpRequest.responseText;
+				resolve(data);
+			}
+		};
+		httpRequest.open('GET', theUrl, true);
+		httpRequest.send(null);
+	})
+}
+
 var getLearningReports = async (e) => {
 	e.target.disabled=true;//不可用
-	var httpGetAsync = (theUrl) => {
-		return new Promise((resolve, reject)=>{
-	    	var httpRequest = new XMLHttpRequest();
-		    httpRequest.onreadystatechange = function() {
-		        if (httpRequest.readyState == 4 && httpRequest.status == 200) {
-		            //if you fetch a file you can JSON.parse(httpRequest.responseText)
-		            var data = httpRequest.responseText;
-		            resolve(data);
-		        }
-		    };
-		    httpRequest.open('GET', theUrl, true);
-		    httpRequest.send(null);
-		})
-	}
 
 	var isoDate = (timestamp) => (new Date(timestamp * 1000 + 28800000 /*时区*/ )).toISOString().match('(.{10})T.{8}')[1];
 	var isoTime = (timestamp) => (new Date(timestamp * 1000 + 28800000 /*时区*/ )).toISOString().match('.{10}T(.{8})')[1];
@@ -113,7 +114,48 @@ var getLearningReports = async (e) => {
 	e.target.disabled=false;//可用
 }
 
-var btn = document.createElement('button');
-btn.innerHTML = `了解我的学习情况（查成绩）`;
-btn.addEventListener('click', getLearningReports)
-document.querySelector('.u_name').append(btn)
+var LearningReport = async()=>{
+	var btn = document.createElement('button');
+	btn.innerHTML = `了解我的学习情况<br>（查成绩查时间）`;
+	btn.addEventListener('click', getLearningReports)
+	document.querySelector('.u_name').append(btn)
+}
+LearningReport()
+
+var ForceSubmitScore = async (uid) => {
+	if(!uid){
+		let profileHTML = await httpGetAsync("http://210.35.98.12:8844/cp.php?ac=profile");
+		let match = profileHTML.match(/uid=(\d+)/)
+		if(!match) return false
+		let uid = match[1];
+		return ForceSubmitScore(uid)
+	}
+	[...document.querySelectorAll("a")].filter(e=>e.href.match(/.\/s\.php\?do=lesson&lid=(\d+)/)).map(e=>{
+		var round = (number, precision) => Math.round(+number + 'e' + precision) / Math.pow(10, precision)
+		let lid = e.href.match(/.\/s\.php\?do=lesson&lid=(\d+)/)[1]
+		let pron   = round(Math.random() * 5 + 87, 2)
+		let tone   = round(Math.random() * 5 + 87, 2)
+		let rhythm = round(Math.random() * 5 + 87, 2)
+		let scope  = round(Math.random() * 5 + 87, 2)
+		let total  = round(Math.random() * 5 + 87, 2)
+		let spendtime = round(Math.random() * 150 + 400, 0)
+		let token = 11200000 + parseInt(Math.random() * 10000)
+		let url =`http://210.35.98.12:8844//playserver.php?target=&lid=${lid}&testtype=0&targetid=&uid=${uid}&do=submitscore&total=${total}&pron=${pron}&tone=${tone}&rhythm=${rhythm}&scope=${scope}&spendtime=${spendtime}&token=${token}`
+		
+		let btn = document.createElement("button")
+		btn.innerHTML = `我要 ${total} 分！`
+		btn.addEventListener("click", (e)=> {
+			e.target.disabled=true;
+			await httpGetAsync(url);
+			window.location = window.location;
+			e.target.disabled=false;
+		})
+		
+		let div = document.createElement("div")
+		div.append(btn);
+		e.parentNode.append(div)
+	});
+	return true;
+}
+
+ForceSubmitScore()
