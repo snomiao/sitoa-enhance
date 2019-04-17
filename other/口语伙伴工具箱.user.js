@@ -89,30 +89,31 @@ var getLearningReports = async (e) => {
 	};
 
 
-	alert(report)
-	// var ele = document.createElement('div')
-	// ele.innerHTML = `<pre>${report}</pre>`
-	// document.body.append(ele);
-	// var selection = window.getSelection();
-	// selection.selectAllChildren(ele);
+	// alert(report)
+	var ele = document.createElement('div')
+	ele.innerHTML = `<pre>${report}</pre>`
+	document.body.append(ele);
+	var selection = window.getSelection();
+	selection.selectAllChildren(ele);
 
-	// var msgbox = (msg) => {
-	//     var e = document.createElement("div")
-	//     e.innerHTML = `<div style="display: block; position: fixed; font-size: 40px; top:0; left: 0; z-index: 999;">${msg}</div>`
-	//     document.body.append(e)
-	//     setTimeout(()=>e.parentNode.removeChild(e), 1000);
-	// }
+	var msgbox = (msg) => {
+	    var e = document.createElement("div")
+	    e.innerHTML = `<div style="display: block; position: fixed; font-size: 40px; top:0; left: 0; z-index: 999;">${msg}</div>`
+	    document.body.append(e)
+	    setTimeout(()=>e.parentNode.removeChild(e), 1000);
+	}
 
-	// //
-	// if(document.execCommand("copy")){
-	//     msgbox("内容已复制")
-	// }else{
-	//     msgbox("内容复制失败")
-	// }
+	//
+	if(document.execCommand("copy")){
+	    msgbox("内容已复制")
+	}else{
+	    msgbox("内容复制失败")
+	}
+
 	e.target.disabled=false;//可用
 }
 
 var btn = document.createElement('button');
-btn.innerHTML = `了解我的学习情况`
+btn.innerHTML = `了解我的学习情况（查成绩）`;
 btn.addEventListener('click', getLearningReports)
 document.querySelector('.u_name').append(btn)
