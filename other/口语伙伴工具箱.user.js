@@ -144,11 +144,11 @@ var ForceSubmitScore = async (lid, uid) => {
 		return ForceSubmitScore(lid, uid)
 	}
 	
-	let pron   = round(Math.random() * 5 + 87, 2)
-	let tone   = round(Math.random() * 5 + 87, 2)
-	let rhythm = round(Math.random() * 5 + 87, 2)
-	let scope  = round(Math.random() * 5 + 87, 2)
-	let total  = round(Math.random() * 5 + 87, 2)
+	let pron   = round(Math.random() * 10 + 84, 2)
+	let tone   = round(Math.random() * 10 + 84, 2)
+	let rhythm = round(Math.random() * 10 + 84, 2)
+	let scope  = round(Math.random() * 10 + 84, 2)
+	let total  = round(Math.random() * 10 + 84, 2)
 	let spendtime = round(Math.random() * 150 + 400, 0)
 	let token = 11200000 + parseInt(Math.random() * 10000)
 	let url =`http://210.35.98.12:8844//playserver.php?target=&lid=${lid}&testtype=0&targetid=&uid=${uid}&do=submitscore&total=${total}&pron=${pron}&tone=${tone}&rhythm=${rhythm}&scope=${scope}&spendtime=${spendtime}&token=${token}`
@@ -168,11 +168,11 @@ var ForceSubmitScoreButtons = async (uid) => {
 	[...document.querySelectorAll("a")].filter(e=>e.href.match(/\.\/s\.php\?do=lesson&lid=(\d+)/)).map(e=>{
 		var round = (number, precision) => Math.round(+number + 'e' + precision) / Math.pow(10, precision)
 		let lid = e.href.match(/.\/s\.php\?do=lesson&lid=(\d+)/)[1]
-		let pron   = round(Math.random() * 5 + 87, 2)
-		let tone   = round(Math.random() * 5 + 87, 2)
-		let rhythm = round(Math.random() * 5 + 87, 2)
-		let scope  = round(Math.random() * 5 + 87, 2)
-		let total  = round(Math.random() * 5 + 87, 2)
+		let pron   = round(Math.random() * 10 + 84, 2)
+		let tone   = round(Math.random() * 10 + 84, 2)
+		let rhythm = round(Math.random() * 10 + 84, 2)
+		let scope  = round(Math.random() * 10 + 84, 2)
+		let total  = round(Math.random() * 10 + 84, 2)
 		let spendtime = round(Math.random() * 150 + 400, 0)
 		let token = 11200000 + parseInt(Math.random() * 10000)
 		let url =`http://210.35.98.12:8844//playserver.php?target=&lid=${lid}&testtype=0&targetid=&uid=${uid}&do=submitscore&total=${total}&pron=${pron}&tone=${tone}&rhythm=${rhythm}&scope=${scope}&spendtime=${spendtime}&token=${token}`
@@ -196,11 +196,11 @@ var ForceSubmitScoreButtons = async (uid) => {
 			let lid = match2[1];
 			
 			var round = (number, precision) => Math.round(+number + 'e' + precision) / Math.pow(10, precision)
-			let pron   = round(Math.random() * 5 + 87, 2)
-			let tone   = round(Math.random() * 5 + 87, 2)
-			let rhythm = round(Math.random() * 5 + 87, 2)
-			let scope  = round(Math.random() * 5 + 87, 2)
-			let total  = round(Math.random() * 5 + 87, 2)
+			let pron   = round(Math.random() * 10 + 84, 2)
+			let tone   = round(Math.random() * 10 + 84, 2)
+			let rhythm = round(Math.random() * 10 + 84, 2)
+			let scope  = round(Math.random() * 10 + 84, 2)
+			let total  = round(Math.random() * 10 + 84, 2)
 			let spendtime = round(Math.random() * 150 + 400, 0)
 			let token = 11200000 + parseInt(Math.random() * 10000)
 			let url =`http://210.35.98.12:8844//playserver.php?target=&lid=${lid}&testtype=0&targetid=&uid=${uid}&do=submitscore&total=${total}&pron=${pron}&tone=${tone}&rhythm=${rhythm}&scope=${scope}&spendtime=${spendtime}&token=${token}`
