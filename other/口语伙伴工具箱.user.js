@@ -1,7 +1,7 @@
 // ==UserScript==
-// @name         上应口语伙伴工具箱
+// @name         SIT上应口语伙伴工具箱
 // @namespace    snomiao@gmail.com
-// @version      20190426
+// @version      20190427.121142
 // @description  可查询自己读了多少秒，读了什么课文
 // @author       snomiao
 // @include      *://210.35.98.12:8844/*
