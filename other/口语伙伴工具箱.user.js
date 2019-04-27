@@ -29,8 +29,8 @@ var getLearningReports = async (e) => {
 	var timeZone = 28800000 // === 8 * 60 * 60 * 1000
 	 // isoDateTimeExample = "1970-01-01T00:00:00.000Z"
 	var isoDateTime = (timestamp) => (new Date(timestamp * 1000 + timeZone)).toISOString();
-	var isoDate     = (timestamp) => isoDateTime(timestamp).substring(0, 10);  // "1970-01-01"
-	var isoTime     = (timestamp) => isoDateTime(timestamp).substring(11, 19); // "00:00:00"
+	var isoDate     = (timestamp) => isoDateTime(timestamp).substring(0, 10);  // "1970-01-01" .split(/T|\./)[0]
+	var isoTime     = (timestamp) => isoDateTime(timestamp).substring(11, 19); // "00:00:00"   .split(/T|\./)[1]
 	var localeDate  = (anIsoDate) => {// "1970-01-01" => "1970年1月1日 星期四"
 		anIsoDate = new Date(anIsoDate);
 		return anIsoDate.toLocaleDateString('zh-CN',{
@@ -316,11 +316,11 @@ var ForceSubmitScore = async (lid, uid) => {
 		return ForceSubmitScore(lid, uid)
 	}
 	
-	let pron   = round(Math.random() * 5 + 87, 2)
-	let tone   = round(Math.random() * 5 + 87, 2)
-	let rhythm = round(Math.random() * 5 + 87, 2)
-	let scope  = round(Math.random() * 5 + 87, 2)
-	let total  = round(Math.random() * 5 + 87, 2)
+	let pron   = round(Math.random() * 10 + 84, 2)
+	let tone   = round(Math.random() * 10 + 84, 2)
+	let rhythm = round(Math.random() * 10 + 84, 2)
+	let scope  = round(Math.random() * 10 + 84, 2)
+	let total  = round(Math.random() * 10 + 84, 2)
 	let spendtime = round(Math.random() * 150 + 400, 0)
 	let token = 11200000 + parseInt(Math.random() * 10000)
 	let url =`http://210.35.98.12:8844//playserver.php?target=&lid=${lid}&testtype=0&targetid=&uid=${uid}&do=submitscore&total=${total}&pron=${pron}&tone=${tone}&rhythm=${rhythm}&scope=${scope}&spendtime=${spendtime}&token=${token}`
@@ -342,11 +342,11 @@ var ForceSubmitScoreButtons = async (uid) => {
 	.map(e => {
 		var round = (number, precision) => Math.round(+number + 'e' + precision) / Math.pow(10, precision)
 		let lid = e.href.match(/.\/s\.php\?do=lesson&lid=(\d+)/)[1]
-		let pron   = round(Math.random() * 5 + 87, 2)
-		let tone   = round(Math.random() * 5 + 87, 2)
-		let rhythm = round(Math.random() * 5 + 87, 2)
-		let scope  = round(Math.random() * 5 + 87, 2)
-		let total  = round(Math.random() * 5 + 87, 2)
+		let pron   = round(Math.random() * 10 + 84, 2)
+		let tone   = round(Math.random() * 10 + 84, 2)
+		let rhythm = round(Math.random() * 10 + 84, 2)
+		let scope  = round(Math.random() * 10 + 84, 2)
+		let total  = round(Math.random() * 10 + 84, 2)
 		let spendtime = round(Math.random() * 150 + 400, 0)
 		let token = 11200000 + parseInt(Math.random() * 10000)
 		let url = `http://210.35.98.12:8844//playserver.php?target=&lid=${lid}&testtype=0&targetid=&uid=${uid}&do=submitscore&total=${total}&pron=${pron}&tone=${tone}&rhythm=${rhythm}&scope=${scope}&spendtime=${spendtime}&token=${token}`
@@ -371,11 +371,11 @@ var ForceSubmitScoreButtons = async (uid) => {
 			let lid = match2[1];
 			
 			var round = (number, precision) => Math.round(+number + 'e' + precision) / Math.pow(10, precision)
-			let pron   = round(Math.random() * 5 + 87, 2)
-			let tone   = round(Math.random() * 5 + 87, 2)
-			let rhythm = round(Math.random() * 5 + 87, 2)
-			let scope  = round(Math.random() * 5 + 87, 2)
-			let total  = round(Math.random() * 5 + 87, 2)
+			let pron   = round(Math.random() * 10 + 84, 2)
+			let tone   = round(Math.random() * 10 + 84, 2)
+			let rhythm = round(Math.random() * 10 + 84, 2)
+			let scope  = round(Math.random() * 10 + 84, 2)
+			let total  = round(Math.random() * 10 + 84, 2)
 			let spendtime = round(Math.random() * 150 + 400, 0)
 			let token = 11200000 + parseInt(Math.random() * 10000)
 			let url = `http://210.35.98.12:8844//playserver.php?target=&lid=${lid}&testtype=0&targetid=&uid=${uid}&do=submitscore&total=${total}&pron=${pron}&tone=${tone}&rhythm=${rhythm}&scope=${scope}&spendtime=${spendtime}&token=${token}`
