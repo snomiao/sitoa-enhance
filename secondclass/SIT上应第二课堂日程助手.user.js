@@ -213,22 +213,25 @@ String.prototype.MD5 = function(){
      return temp.toLowerCase();
 }
 
-function httpGetAsync(theUrl, callback)
-{
-    var xmlHttp = new XMLHttpRequest();
-    xmlHttp.onreadystatechange = function(){
-        if(xmlHttp.readyState == 4 && xmlHttp.status == 200){
-            callback(xmlHttp.responseText);
-        }
-    }
-    xmlHttp.open("GET", theUrl, true); // true for asynchronous
-    xmlHttp.send(null);
+var httpGetAsync = (theUrl) => {
+	return new Promise((resolve, reject)=>{
+		var httpRequest = new XMLHttpRequest();
+		httpRequest.onreadystatechange = function() {
+			if (httpRequest.readyState == 4 && httpRequest.status == 200) {
+				//if you fetch a file you can JSON.parse(httpRequest.responseText)
+				var data = httpRequest.responseText;
+				resolve(data);
+			}
+		};
+		httpRequest.open('GET', theUrl, true);
+		httpRequest.send(null);
+	})
 }
 
 var parseEventData = (html) => {
     var re = {}
     // 样例
-    var 抓取html样例 = `<h1 class="title_8">【学工部】上海应用技术大学2019届毕业生春季校园综合招聘会</h1>
+    let _抓取html样例 = `<h1 class="title_8">【学工部】上海应用技术大学2019届毕业生春季校园综合招聘会</h1>
         <div style=" color:#7a7a7a; text-align:center">
      	   活动编号：1053790 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
      	   活动开始时间：2019-3-29 13:00:00 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -329,56 +332,108 @@ var download_text_plain = (text, title) => {
 }
 
 // 显示工具栏
-var mk_toolbar_ed = false;
+var mk_toolbar_flag = false;
 var mk_toolbar = ()=>{
     var container = document.querySelector(".user-info")
-    if(!container || mk_toolbar_ed){
+    if(!container || mk_toolbar_flag){
         return
     }
-    var tool_bar = document.createElement("div")
-    container.append(tool_bar);
+    var tool_bar = document.createElement("span")
+    
     var toolbarHTML = `<a href="http://sc.sit.edu.cn/public/activity/activityList.action?pageNo=1&pageSize=200&categoryId=&activityName=">查看最近的200个活动</a>`
     if(window.location.href.match("activityDetail.action")){
-        toolbarHTML += `<button onclick="download_current_activity_calendar_ical()">下载ical日程（当前事件）</button>`
+        toolbarHTML += ` <button onclick="download_current_activity_calendar_ical(this)">下载 当前事件.ical</button>`
     }else{
-        toolbarHTML += `<button onclick="download_listof_activity_calendar_ical()">下载ical日程（当前列表）</button>`
+        toolbarHTML += ` <button onclick="download_listof_activity_calendar_ical(this)">下载 当前页面活动列表.ical</button>`
     }
+    toolbarHTML += ` <button onclick="download_all_listof_activity_calendar_ical(this)">下载 近期所有第二课堂活动.ical</button>`
     tool_bar.innerHTML = toolbarHTML;
-    mk_toolbar_ed = true;
+    //container.insertBefore(tool_bar,container.firstChild);
+    container.append(tool_bar);
+    mk_toolbar_flag = true;
 
 }
-
 
 // 解析并下载当前页面的日历
-window.download_current_activity_calendar_ical = () => {
+window.download_current_activity_calendar_ical = async (e) => {
+    if(e) e.target.disalbed=true;
     var href = window.location;
-    httpGetAsync(href,(html)=>{
-        var re = parseEventData(html)
-        re.description += '\n' + href;
-        var ical_content = make_ical([re]);
-        download_text_plain(ical_content, "第二课堂活动：" + document.querySelector("h1").innerText + ".ical")
-    })
+    var html = await httpGetAsync(href)
+    var re = parseEventData(html)
+    re.description += '\n' + href;
+    var ical_content = make_ical([re]);
+    download_text_plain(ical_content, "第二课堂活动：" + document.querySelector("h1").innerText + ".ical")
+    if(e) e.target.disalbed=false;
 }
 
-window.download_listof_activity_calendar_ical = () => {
-
+window.download_listof_activity_calendar_ical = async (e) => {
+    if(e) e.disalbed=true;
     // 获取当前页面上所有活动详情的URL;
     var hrefs = [...document.querySelectorAll("a")].map(a=>a.href).filter(href=>!!href.match("activityDetail.action"))
 
-    // 开始下载
+    // 异步下载所有事件
     var events = [];
-    hrefs.forEach(href => {
-        httpGetAsync(href, (html)=>{
+    await Promise.all(hrefs.map(async href => {
+        let html = await httpGetAsync(href)
+        var event = parseEventData(html)
+        event.description += '\n' + href;
+        events.push(event)
+
+        if(events.length == hrefs.length){
+            var ical_content = make_ical(events);
+            download_text_plain(ical_content, document.querySelector("title").innerText + ".ical")
+        }
+    }))
+    if(e) e.disalbed=false;
+}
+
+window.download_all_listof_activity_calendar_ical = async (e) => {
+    if(e) e.disalbed=true;
+    // TODO: 进度条
+    // let caption = e.innerText
+    // e.innerText = caption + "" + 
+    // let doneCount = 
+    let all_events = [];
+    // 异步列出每个分类最近的20个活动，并等待全部返回
+    await Promise.all(([
+        [`001`,`讲座报告`],
+        [`ff808081674ec4720167ce60dda77cea`,`主题教育`],
+        [`ff8080814e241104014eb867e1481dc3`,`创新创业创意`],
+        [`8ab17f543fe626a8013fe6278a880001`,`社团社区易班、学院活动`],
+        [`8ab17f543fe62d5d013fe62efd3a0002`,`社会实践`],
+        [`8ab17f543fe62d5d013fe62e6dc70001`,`公益志愿`],
+        [`402881de5d62ba57015d6320f1a7000c`,`安全教育网络教学`],
+        [`8ab17f2a3fe6585e013fe6596c300001`,`校园文化竞赛活动`],
+        [`8ab17f533ff05c27013ff06d10bf0001`,`论文专利`],
+        [`ff8080814e241104014fedbbf7fd329d`,`会议（无学分）`]
+    ]).map(async (target)=>{
+        let url=`/public/activity/activityList.action?pageNo=1&pageSize=20&categoryId=${target[0]}`;
+        let actType=target[1];
+        
+        // 获取当前分类的活动链接（列表）
+        let v_dom = document.createElement("html");
+        v_dom.innerHTML = await httpGetAsync(url)
+        var hrefs = [...v_dom.querySelectorAll("a")].map(a=>a.href).filter(href=>!!href.match("activityDetail.action"))
+
+        // 异步下载所有活动，并等待全部下载完成
+        let events = await Promise.all(hrefs.map(async href => {
+            let html = await httpGetAsync(href)
             var event = parseEventData(html)
             event.description += '\n' + href;
-            events.push(event)
 
-            if(events.length == hrefs.length){
-                var ical_content = make_ical(events);
-                download_text_plain(ical_content, document.querySelector("title").innerText + ".ical")
-            }
-        })
-    })
+            // 除此之外还要标出活动类型
+            event.description = "活动类型: " + actType + "\n\n" + event.description;
+            return event;
+        }))
+        // 收集
+        all_events = all_events.concat(events);
+    }))
+
+    // 转成ical格式并触发下载
+    var ical_content = make_ical(all_events);
+    download_text_plain(ical_content, "[" + new Date().toISOString().replace(/[^0-9]/g,'').substr(0,8) + "]近期第二课堂活动.ical")
+    
+    if(e) e.disalbed=false;
 }
 
 window.addEventListener("load", mk_toolbar)
