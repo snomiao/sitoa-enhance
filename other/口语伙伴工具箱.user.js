@@ -1,4 +1,4 @@
-// ==UserScript==
+﻿// ==UserScript==
 // @name         SIT上应口语伙伴工具箱
 // @namespace    snomiao@gmail.com
 // @version      20190427.121142
